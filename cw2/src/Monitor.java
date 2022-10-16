@@ -3,12 +3,12 @@ public class Monitor {
     private int limit;
 
     Monitor(int _limit){
-        buffor = 0 ;
+        buffor = _limit/2;
         limit = _limit;
     }
 
     public synchronized void produced(){
-        while(buffor == 1){
+        while(buffor == limit){
             try{
                 wait();
             } catch (Exception e) {
@@ -16,10 +16,10 @@ public class Monitor {
             }
         }
 
-        System.out.println("buffor: 1");
-        buffor = 1;
+        System.out.println(buffor);
+        buffor++;
 
-        notifyAll();
+        notify();
     }
 
     public synchronized void consume(){
@@ -31,10 +31,10 @@ public class Monitor {
             }
         }
 
-        System.out.println("buffor: 0");
-        buffor = 0;
+        System.out.println(buffor);
+        buffor--;
 
-        notifyAll();
+        notify();
     }
 
     public synchronized int getBuffor(){return buffor;}

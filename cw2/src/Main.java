@@ -1,9 +1,10 @@
 public class Main {
     public static void main(String[] args) {
 
-        int num = 3;
+        int num = 10;
+        int size = 6;
 
-        Monitor buffor = new Monitor();
+        Monitor buffor = new Monitor(size);
 
         Producent[] p = new Producent[num];
 
