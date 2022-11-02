@@ -1,4 +1,5 @@
-import java.util.concurrent.locks.*;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.Condition;
 
 public class Monitor {
     private int buffor;
@@ -6,7 +7,9 @@ public class Monitor {
 
     boolean four_cond;
 
-    Lock lock = new ReentrantLock();
+    final boolean has_waiters = true;
+
+    ReentrantLock lock = new ReentrantLock();
 
     boolean prod_w;
 
@@ -31,20 +34,33 @@ public class Monitor {
             try {
                 lock.lock();
 
-                while (prod_w)
-                    rest_prod.await();
+                if(has_waiters) {
+                    System.out.println(p.getThreadName() + " awaits for first");
 
-                prod_w = true;
-                while (buffor > limit - val)
-                    first_prod.await();
+                    while (lock.hasWaiters(first_prod))
+                        rest_prod.await();
 
+                    System.out.println(p.getThreadName() + " is first");
 
+                    while (buffor > limit - val)
+                        first_prod.await();
 
-                buffor+= val;
+                    System.out.println(p.getThreadName() + " produced " + val);
+                }
+                else{
+                    while (prod_w)
+                        rest_prod.await();
+
+                    prod_w = true;
+                    while (buffor > limit - val)
+                        first_prod.await();
+                    prod_w = false;
+
+                    p.is_produced();
+                }
+
+                buffor += val;
                 //System.out.println(buffor);
-                p.is_produced();
-
-                prod_w = false;
 
                 first_con.signal();
                 rest_prod.signal();
@@ -77,21 +93,35 @@ public class Monitor {
         }
     }
 
-    public  void consume(int val){
+    public  void consume(int val, Konsumer c){
         if(four_cond){
             try {
                 lock.lock();
 
-                while (con_w)
-                    rest_con.await();
+                if(has_waiters) {
+                    System.out.println(c.getThreadName() + " awaits for first");
 
-                con_w = true;
-                while (buffor < val)
-                    first_con.await();
-                buffor-=val;
+                    while (lock.hasWaiters(first_con))
+                        rest_con.await();
+
+                    System.out.println(c.getThreadName() + " is first");
+
+                    while (buffor < val)
+                        first_con.await();
+
+                    System.out.println(c.getThreadName() + " consumed " + val);
+                }
+                else {
+                    while (con_w)
+                        rest_con.await();
+
+                    con_w = true;
+                    while (buffor < val)
+                        first_con.await();
+                    con_w = false;
+                }
+                buffor -= val;
                 //System.out.println(buffor);
-
-                con_w = false;
 
                 first_prod.signal();
                 rest_con.signal();
