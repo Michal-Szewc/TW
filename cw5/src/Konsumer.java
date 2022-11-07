@@ -1,16 +1,19 @@
+import java.util.Random;
+
 public class Konsumer extends Thread{
-    Monitor m;
+    IMonitor m;
     private int limit;
     private Integer num;
+    private Random random;
 
-    Konsumer (Monitor _m, int _limit, int _num){m = _m; limit = _limit; num = _num;}
+    Konsumer (IMonitor _m, int _limit, int _num, Random _random){m = _m; limit = _limit; num = _num; random = _random;}
 
     public void run(){
-        System.out.println("Konsumer run");
+        //System.out.println("Konsumer run");
 
-        int val = (int)((Math.random() * (limit/2 - 1)) + 1);
+        int val = (int)((random.nextDouble() * (limit - 1)) + 1);
         while(m.consume(val, this))
-            val = (int)((Math.random() * (limit/2 - 1)) + 1);
+            val = (int)((random.nextDouble() * (limit - 1)) + 1);
     }
 
     public String getThreadName(){

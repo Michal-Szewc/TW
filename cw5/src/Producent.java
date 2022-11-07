@@ -1,17 +1,20 @@
+import java.util.Random;
+
 public class Producent extends Thread{
-    Monitor m;
+    IMonitor m;
     private int limit;
     private int count;
     private Integer num;
+    private Random random;
 
-    Producent(Monitor _m, int _limit, int _num){m = _m; limit = _limit; count=0; num = _num;}
+    Producent(IMonitor _m, int _limit, int _num, Random _random){m = _m; limit = _limit; count=0; num = _num;random = _random;}
 
     public void run(){
-        System.out.println("producer run");
+        //System.out.println("producer run");
 
-        int val = (int)((Math.random() * (limit - 1)) + 1);
+        int val = (int)((random.nextDouble() * (limit - 1)) + 1);
         while(m.produced(val, this))
-            val = (int)((Math.random() * (limit - 1)) + 1);
+            val = (int)((random.nextDouble() * (limit - 1)) + 1);
     }
 
     public void is_produced(){

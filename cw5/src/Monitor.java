@@ -1,11 +1,12 @@
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Condition;
 
-public class Monitor {
+public class Monitor implements IMonitor{
     int buffor;
     int limit;
     int operations_limit;
     long startTime;
+    long startTime2;
 
     int sum;
 
@@ -23,6 +24,7 @@ public class Monitor {
         sum = 0;
         operations_limit = _operations_limit;
         startTime = System.nanoTime();
+        startTime2 = System.currentTimeMillis();
     }
 
     public  boolean produced(int val, Producent p){
@@ -72,6 +74,8 @@ public class Monitor {
 
     public void getTime(){
         long endTime = System.nanoTime();
-        System.out.println((endTime - startTime)/1000000);
+        System.out.println("czas procesora " + (endTime - startTime)/1000000 + " milisekund");
+        endTime = System.currentTimeMillis();
+        System.out.println("czas rzeczywisty " + (endTime - startTime2) + " milisekund");
     }
 }
