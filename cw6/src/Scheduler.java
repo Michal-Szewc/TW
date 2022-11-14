@@ -1,30 +1,31 @@
-import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Scheduler {
+    private LinkedBlockingQueue<MethodRequest> activeQueue;
+    private LinkedBlockingQueue<MethodRequest> waitingQueue;
 
-    final private int bufor_limit;
-    private int bufor;
-
-    private List<Thread> clients;
-    private List<Thread> vip_clients;
-
-    Scheduler(int _bufor){bufor_limit = _bufor; bufor = 0;}
-
-    Future produce(int val){
-        Future to_return = new Future();
-        clients.add(new Thread(() -> {
-            int to_produce = val;
-
-            while(bufor + to_produce >= bufor_limit){
-                ...
-            }
-
-            bufor += to_produce;
-
-            to_return.setData(0);
-        }));
-
-        return to_return;
+    Scheduler(){
+        activeQueue = new LinkedBlockingQueue<>();
+        waitingQueue = new LinkedBlockingQueue<>();
     }
 
+    void enqueue(MethodRequest m) throws InterruptedException {
+        activeQueue.put(m);
+    }
+
+    void dispatch() throws InterruptedException {
+        while(true){
+            if(!waitingQueue.isEmpty() && waitingQueue.peek().guard()){
+                MethodRequest m = waitingQueue.take();
+                m.call();
+            }
+            else if(!activeQueue.isEmpty()){
+                MethodRequest m = activeQueue.take();
+                if (m.guard())
+                    m.call();
+                else
+                    waitingQueue.put(m);
+            }
+        }
+    }
 }
