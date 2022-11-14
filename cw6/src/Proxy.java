@@ -10,20 +10,15 @@ public class Proxy {
         servant = new Servant(_limit);
     }
 
-    void produce(int val) throws InterruptedException {
-        MethodRequest m = new Produce(servant, val);
-        scheduler.enqueue(m);
+    BufforFuture produce(int val) throws InterruptedException {
+        BufforFuture result = new BufforFuture();
+        scheduler.enqueue(new Produce(servant, result, val));
+        return result;
     }
 
     BufforFuture consume(int val) throws InterruptedException {
         BufforFuture result = new BufforFuture();
-        MethodRequest m = new Consume(servant, result, val);
-        scheduler.enqueue(m);
+        scheduler.enqueue(new Consume(servant, result, val));
         return result;
     }
-
-    void dispatch() throws InterruptedException{
-        scheduler.dispatch();
-    }
-
 }

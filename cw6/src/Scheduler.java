@@ -1,12 +1,23 @@
+import java.util.ArrayDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Scheduler {
     private LinkedBlockingQueue<MethodRequest> activeQueue;
-    private LinkedBlockingQueue<MethodRequest> waitingQueue;
+    private ArrayDeque<MethodRequest> waitingQueue;
 
     Scheduler(){
         activeQueue = new LinkedBlockingQueue<>();
-        waitingQueue = new LinkedBlockingQueue<>();
+        waitingQueue = new ArrayDeque<>();
+
+        new Thread("scheduler thread"){
+            public void run(){
+                try {
+                    dispatch();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     void enqueue(MethodRequest m) throws InterruptedException {
@@ -16,15 +27,15 @@ public class Scheduler {
     void dispatch() throws InterruptedException {
         while(true){
             if(!waitingQueue.isEmpty() && waitingQueue.peek().guard()){
-                MethodRequest m = waitingQueue.take();
+                MethodRequest m = waitingQueue.pop();
                 m.call();
             }
-            else if(!activeQueue.isEmpty()){
+            else{
                 MethodRequest m = activeQueue.take();
                 if (m.guard())
                     m.call();
                 else
-                    waitingQueue.put(m);
+                    waitingQueue.add(m);
             }
         }
     }

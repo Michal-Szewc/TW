@@ -1,7 +1,7 @@
 public class BufforFuture {
 
     private boolean done;
-    private int data;
+    volatile private int data;
 
     BufforFuture(){
         data = -1;
@@ -17,10 +17,7 @@ public class BufforFuture {
         this.done = true;
     }
 
-    synchronized int get() throws InterruptedException{
-        if(isDone())
-            return data;
-        wait();
+    int get() throws InterruptedException{
         return data;
     }
 }

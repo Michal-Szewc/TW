@@ -15,8 +15,9 @@ public class Servant {
         return limit - buffor;
     }
 
-    void produce(int val){
+    int produce(int val){
         buffor += val;
+        return buffor;
     }
     int consume(int val){
         buffor -= val;

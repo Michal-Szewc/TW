@@ -7,10 +7,12 @@ public abstract class MethodRequest {
 
 class Produce extends MethodRequest {
     Servant servant;
+    BufforFuture result;
     int val;
 
-    Produce(Servant _servant, int _val){
+    Produce(Servant _servant, BufforFuture _result, int _val){
         servant = _servant;
+        result = _result;
         val = _val;
     }
 
@@ -44,9 +46,6 @@ class Consume extends MethodRequest {
 
     @Override
     public void call() {
-        synchronized (result) {
-            result.setResult(servant.consume(val));
-            result.notify();
-        }
+        result.setResult(servant.consume(val));
     }
 }
