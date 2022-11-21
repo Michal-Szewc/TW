@@ -1,26 +1,26 @@
 public class Servant {
-    int buffor;
+    int buffer;
     int limit;
 
     Servant(int _limit){
         limit = _limit;
-        buffor = 0;
+        buffer = 0;
     }
 
-    int getBuffor(){
-        return buffor;
+    int getBuffer(){
+        return buffer;
     }
 
-    int leftInBuffor(){
-        return limit - buffor;
+    int leftInBuffer(){
+        return limit - buffer;
     }
 
     int produce(int val){
-        buffor += val;
-        return buffor;
+        buffer += val;
+        return buffer;
     }
     int consume(int val){
-        buffor -= val;
-        return buffor;
+        buffer -= val;
+        return buffer;
     }
 }

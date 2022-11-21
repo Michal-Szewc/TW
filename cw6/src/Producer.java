@@ -1,14 +1,15 @@
 import java.util.Random;
 
-public class Consumer  extends Thread{
-    private int limit;
+public class Producer extends Thread{
+
     private int sleep_time;
+    private int limit;
     private Random rand;
     private Proxy proxy;
     boolean working;
     long n_jobs;
 
-    Consumer(Proxy _proxy, Random _rand, int _limit, int _sleep_time){
+    Producer(Proxy _proxy, Random _rand, int _limit, int _sleep_time){
         proxy = _proxy;
         rand = _rand;
         limit = _limit - 1;
@@ -22,12 +23,12 @@ public class Consumer  extends Thread{
         while(working){
             val = rand.nextInt(limit) + 1;
             try{
-                BufferFuture result = proxy.consume(val);
+                BufferFuture result = proxy.produce(val);
                 while(!result.isDone() && working) {
-                    sleep(20);
+                    sleep(sleep_time);
                     ++n_jobs;
                 }
-                // System.out.println("consumed: " + val);
+                // System.out.println("produced: " + val);
             } catch (InterruptedException e){
                 e.printStackTrace();
             }

@@ -7,10 +7,10 @@ public abstract class MethodRequest {
 
 class Produce extends MethodRequest {
     Servant servant;
-    BufforFuture result;
+    BufferFuture result;
     int val;
 
-    Produce(Servant _servant, BufforFuture _result, int _val){
+    Produce(Servant _servant, BufferFuture _result, int _val){
         servant = _servant;
         result = _result;
         val = _val;
@@ -19,29 +19,29 @@ class Produce extends MethodRequest {
 
     @Override
     public boolean guard() {
-        return servant.leftInBuffor() >= val;
+        return servant.leftInBuffer() >= val;
     }
 
     @Override
     public void call() {
-        servant.produce(val);
+        result.setResult(servant.produce(val));
     }
 }
 
 class Consume extends MethodRequest {
 
     Servant servant;
-    BufforFuture result;
+    BufferFuture result;
     int val;
 
-    Consume(Servant _servant, BufforFuture _result, int _val){
+    Consume(Servant _servant, BufferFuture _result, int _val){
         servant = _servant;
         result = _result;
         val = _val;
     }
     @Override
     public boolean guard() {
-        return servant.getBuffor() >= val;
+        return servant.getBuffer() >= val;
     }
 
     @Override
