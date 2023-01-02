@@ -8,9 +8,9 @@ public class Main {
 
         final int seed_offset = 12;
 
-        final int client_num = 4; // number of consumers and producers
+        final int client_num = 6; // number of consumers and producers
         final int buffer_size = 10;
-        final int buffer_count = 20;
+        final int buffer_count = 5;
         List<CSProcess> processes = new ArrayList<>();
         List<Client> clients = new ArrayList<>();
         ArrayList<Secretary> secretaries = new ArrayList<>();

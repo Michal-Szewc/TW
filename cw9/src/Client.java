@@ -58,7 +58,7 @@ public class Client implements CSProcess{
                     inform = new Message(MessageType.TOKEN_RESPONSE_SUCCESS, ID);
                 }
                 else {
-                    System.out.println(this.name + "Nie udało się zmienić, zły stan bufora");
+                    System.out.println(this.name + "Nie udało się zmienić, zły stan bufora: " + bufferRef[ID].buffer);
                     inform = new Message(MessageType.TOKEN_RESPONSE_FAILURE, ID);
                 }
                 req.out().write(inform);
